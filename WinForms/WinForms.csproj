@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net48;net6.0-windows</TargetFrameworks>
+		<UseWindowsForms>true</UseWindowsForms>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+		<RootNamespace>PW.WinForms</RootNamespace>
+		<AssemblyName>PW.WinForms</AssemblyName>
+
+		<Nullable>enable</Nullable>
+		<LangVersion>preview</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<AnalysisLevel>preview-all</AnalysisLevel>
+
+
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="PW.Common" Version="5.0.2" />
+		<PackageReference Include="PW.Drawing" Version="3.1.0" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<!-- Remove all using that appear in the 'hidden' auto-generated file -->
+		<Using Remove="System" />
+		<Using Remove="System.Collections.Generic" />
+		<Using Remove="System.Drawing" />
+		<Using Remove="System.IO" />
+		<Using Remove="System.Linq" />
+		<Using Remove="System.Net.Http" />
+		<Using Remove="System.Threading" />
+		<Using Remove="System.Threading.Tasks" />
+		<Using Remove="System.Windows.Forms" />
+		<Using Remove="System.Net.WebRequestMethods" Static="true" />
+		<Using Remove="System.Net.NetworkInformation" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <None Include="..\.editorconfig" Link=".editorconfig" />
+	</ItemGroup>
+
+</Project>
