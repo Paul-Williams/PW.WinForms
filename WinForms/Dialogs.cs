@@ -36,7 +36,7 @@ namespace PW.WinForms
       {
         Description = description,
         ShowNewFolderButton = showNewFolderButton,
-        SelectedPath = initialPath
+        SelectedPath = initialPath!
       };
     }
     /// <summary>
