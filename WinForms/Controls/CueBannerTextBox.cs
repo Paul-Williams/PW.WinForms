@@ -1,57 +1,58 @@
-﻿# nullable enable
+﻿using System.ComponentModel;
 
-using System.Drawing;
-using System.Windows.Forms;
+namespace PW.WinForms.Controls;
 
-namespace PW.WinForms.Controls
+/// <summary>
+/// TextBox is a Cue Banner.
+/// </summary>
+[Obsolete("Use standard TextBox")]
+public partial class CueBannerTextBox : TextBox
 {
+  //const int WM_PASTE = 0x302;
+  private const int WM_PAINT = 0xF;
+
+
   /// <summary>
-  /// TextBox is a Cue Banner.
+  /// Text to display as Cue Banner.
   /// </summary>
-  public class CueBannerTextBox : TextBox
+  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+  /// <summary>
+  /// Text to display as Cue Banner.
+  /// </summary>
+  public string? CueBannerText { get; set; }
+
+  /// <summary>
+  /// WndProc
+  /// </summary>
+  /// <param name="m"></param>
+  [System.Diagnostics.DebuggerStepThrough]
+  protected override void WndProc(ref Message m)
   {
-    //const int WM_PASTE = 0x302;
-    private const int WM_PAINT = 0xF;
 
+    // Allow normal draw first
+    base.WndProc(ref m);
 
-    /// <summary>
-    /// Text to display as Cue Banner.
-    /// </summary>
-    public string? CueBannerText { get; set; }
-
-    /// <summary>
-    /// WndProc
-    /// </summary>
-    /// <param name="m"></param>
-    [System.Diagnostics.DebuggerStepThrough]
-    protected override void WndProc(ref Message m)
+    // Override 'paint' messages: Display 'Cue Banner' text when appropriate.
+    if (m.Msg == WM_PAINT)
     {
 
-      // Allow normal draw first
-      base.WndProc(ref m);
-
-      // Override 'paint' messages: Display 'Cue Banner' text when appropriate.
-      if (m.Msg == WM_PAINT)
+      // Then add Cue Banner text
+      if (/*!Focused &&*/ string.IsNullOrEmpty(Text) && !string.IsNullOrEmpty(CueBannerText))
       {
-
-        // Then add Cue Banner text
-        if (/*!Focused &&*/ string.IsNullOrEmpty(Text) && !string.IsNullOrEmpty(CueBannerText))
-        {
-          using var graphics = CreateGraphics();
-          TextRenderer.DrawText(
-              dc: graphics,
-              text: CueBannerText,
-              font: Font,
-              bounds: ClientRectangle,
-              foreColor: SystemColors.GrayText,
-              backColor: Enabled ? BackColor : SystemColors.Control,
-              flags: Multiline ? TextFormatFlags.Top | TextFormatFlags.Left : TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
-        }
-        return;
+        using var graphics = CreateGraphics();
+        TextRenderer.DrawText(
+            dc: graphics,
+            text: CueBannerText,
+            font: Font,
+            bounds: ClientRectangle,
+            foreColor: SystemColors.GrayText,
+            backColor: Enabled ? BackColor : SystemColors.Control,
+            flags: Multiline ? TextFormatFlags.Top | TextFormatFlags.Left : TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
       }
-
+      return;
     }
 
-
   }
+
+
 }

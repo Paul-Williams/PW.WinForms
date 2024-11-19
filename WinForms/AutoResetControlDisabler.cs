@@ -1,18 +1,11 @@
-﻿using PW.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Windows.Forms;
-
-namespace PW.WinForms;
+﻿namespace PW.WinForms;
 
 /// <summary>
 /// Disables controls and restores their previous enabled state when disposed. Useful within a 'using' block when app is processing.
 /// </summary>
 public sealed class AutoResetControlDisabler : IDisposable
 {
-  private Dictionary<Control, bool> OriginalControlEnabledStates { get; } = new Dictionary<Control, bool>();
+  private Dictionary<Control, bool> OriginalControlEnabledStates { get; } = [];
   private System.Threading.Timer? DisableControlsTimer { get; set; }
   private bool ReenableRequired;
   private SynchronizationContext? SC { get; }
@@ -25,7 +18,7 @@ public sealed class AutoResetControlDisabler : IDisposable
 
     if (wait == default)
     {
-      ControlsWithOriginalEnabledState(true).ForEach(c => c.Enabled = false);
+      _ = ControlsWithOriginalEnabledState(true).ForEach(c => c.Enabled = false);
       ReenableRequired = true;
     }
 
@@ -42,7 +35,7 @@ public sealed class AutoResetControlDisabler : IDisposable
     if (SC is not null && SC != SynchronizationContext.Current)
       SC.Post(new SendOrPostCallback((o) => ControlsWithOriginalEnabledState(true).ForEach(c => c.Enabled = false)), null);
     else
-      ControlsWithOriginalEnabledState(true).ForEach(c => c.Enabled = false);
+      _ = ControlsWithOriginalEnabledState(true).ForEach(c => c.Enabled = false);
 
 
   }
@@ -93,11 +86,11 @@ public sealed class AutoResetControlDisabler : IDisposable
   {
     if (DisableControlsTimer != null)
     {
-      DisableControlsTimer.Change(Timeout.Infinite, Timeout.Infinite);
+      _ = DisableControlsTimer.Change(Timeout.Infinite, Timeout.Infinite);
       DisableControlsTimer.Dispose();
       DisableControlsTimer = null;
     }
-    if (ReenableRequired) ControlsWithOriginalEnabledState(true).ForEach(x => x.Enabled = true);
+    if (ReenableRequired) _ = ControlsWithOriginalEnabledState(true).ForEach(x => x.Enabled = true);
   }
 }
 

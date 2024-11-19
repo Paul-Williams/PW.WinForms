@@ -1,58 +1,52 @@
-﻿#nullable enable
+﻿namespace PW.WinForms.Controls;
 
-using System;
-using System.Windows.Forms;
-
-namespace PW.WinForms.Controls
+/// <summary>
+/// Extended version of <see cref="ListBox"/> control with <see cref="ItemDoubleClick"/> event.
+/// </summary>
+public class ItemDoubleClickListBox : ListBox
 {
   /// <summary>
-  /// Extended version of <see cref="ListBox"/> control with <see cref="ItemDoubleClick"/> event.
+  /// ItemDoubleClickEventArgs
   /// </summary>
-  public class ItemDoubleClickListBox : ListBox
+  public class ItemDoubleClickEventArgs : EventArgs
   {
-    /// <summary>
-    /// ItemDoubleClickEventArgs
-    /// </summary>
-    public class ItemDoubleClickEventArgs : EventArgs
+    internal ItemDoubleClickEventArgs(object item, Keys modifierKeys)
     {
-      internal ItemDoubleClickEventArgs(object item, Keys modifierKeys)
-      {
-        Item = item;
-        ModifierKeys = modifierKeys;
-      }
-
-      /// <summary>
-      /// The item that was double-clicked.
-      /// </summary>
-      public object Item { get; }
-
-      /// <summary>
-      /// See: <see cref="Control.ModifierKeys"/>
-      /// </summary>
-      public Keys ModifierKeys { get; }
+      Item = item;
+      ModifierKeys = modifierKeys;
     }
 
     /// <summary>
-    /// ItemDoubleClick event handler delegate
+    /// The item that was double-clicked.
     /// </summary>
-    public delegate void ItemDoubleClickHandler(object sender, ItemDoubleClickEventArgs e);
+    public object Item { get; }
 
     /// <summary>
-    /// Invoked when a list item is double-clicked.
+    /// See: <see cref="Control.ModifierKeys"/>
     /// </summary>
-    public event ItemDoubleClickHandler? ItemDoubleClick;
-
-    /// <summary>
-    /// Overridden to implement item double-click event.
-    /// </summary>
-    protected override void OnMouseDoubleClick(MouseEventArgs e)
-    {
-      base.OnMouseDoubleClick(e);
-
-      // Only do hit-testing etc. when the double-click event is being handled.
-      if (ItemDoubleClick is ItemDoubleClickHandler handler && IndexFromPoint(e.Location) is int index && index != NoMatches)
-        handler.Invoke(this, new ItemDoubleClickEventArgs(Items[index], ModifierKeys));
-    }
-
+    public Keys ModifierKeys { get; }
   }
+
+  /// <summary>
+  /// ItemDoubleClick event handler delegate
+  /// </summary>
+  public delegate void ItemDoubleClickHandler(object sender, ItemDoubleClickEventArgs e);
+
+  /// <summary>
+  /// Invoked when a list item is double-clicked.
+  /// </summary>
+  public event ItemDoubleClickHandler? ItemDoubleClick;
+
+  /// <summary>
+  /// Overridden to implement item double-click event.
+  /// </summary>
+  protected override void OnMouseDoubleClick(MouseEventArgs e)
+  {
+    base.OnMouseDoubleClick(e);
+
+    // Only do hit-testing etc. when the double-click event is being handled.
+    if (ItemDoubleClick is ItemDoubleClickHandler handler && IndexFromPoint(e.Location) is int index && index != NoMatches)
+      handler.Invoke(this, new ItemDoubleClickEventArgs(Items[index], ModifierKeys));
+  }
+
 }

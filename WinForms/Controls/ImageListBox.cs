@@ -18,7 +18,7 @@ public class ImageListBox : ListBox
   private const int PicPadding = 4;
   private const int PicBottomMargin = 4;
 
-  private readonly Dictionary<IPreviewImage, Image> Thumbs = new();
+  private readonly Dictionary<IPreviewImage, Image> Thumbs = [];
 
   private const int SelectionRectanglePenWidth = 4;
   private Pen SelectedItemBorderPen { get; } = new(SystemColors.HotTrack, SelectionRectanglePenWidth);
@@ -66,8 +66,8 @@ public class ImageListBox : ListBox
     if (e.Index < 0 || Items.Count == 0) return;
     ItemHeight = PicHeight + (PicPadding * 2) + PicBottomMargin;
 
-    if (BackgroundBrush is null) BackgroundBrush = new SolidBrush(BackColor);
-    if (NotSelectedItemBorderPen is null) NotSelectedItemBorderPen = new Pen(Color.White, SelectionRectanglePenWidth);
+    BackgroundBrush ??= new SolidBrush(BackColor);
+    NotSelectedItemBorderPen ??= new Pen(Color.White, SelectionRectanglePenWidth);
     e.Graphics.FillRectangle(BackgroundBrush, e.Bounds);
 
     if (Items[e.Index] is IPreviewImage ip)
@@ -104,8 +104,8 @@ public class ImageListBox : ListBox
   }
 
   private static Rectangle GetImageBoundsRectangle(PointF topLeft, Size imageSize) => new(
-        (int)topLeft.X - SelectionRectanglePenWidth / 2,
-        (int)topLeft.Y - SelectionRectanglePenWidth / 2,
+        (int)topLeft.X - (SelectionRectanglePenWidth / 2),
+        (int)topLeft.Y - (SelectionRectanglePenWidth / 2),
         imageSize.Width + SelectionRectanglePenWidth,
         imageSize.Height + SelectionRectanglePenWidth);
 
@@ -121,10 +121,10 @@ public class ImageListBox : ListBox
       using var img = ip.Image;
       if (img != null)
       {
-        var scale = (double)((PicHeight) - (PicPadding * 2)) / (img.Height - (PicPadding * 2));
+        var scale = (double)(PicHeight - (PicPadding * 2)) / (img.Height - (PicPadding * 2));
         thumb = img.Resize((int)(img.Width * scale), PicHeight - (PicPadding * 2));
         Thumbs.Add(ip, thumb);
-        if (CleanupTimer.Enabled == false) CleanupTimer.Enabled = true;
+        if (!CleanupTimer.Enabled) CleanupTimer.Enabled = true;
       }
       else
       {

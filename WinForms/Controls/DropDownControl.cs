@@ -1,5 +1,4 @@
-﻿// This class requires a lot of work before #nullable enable
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 // See: https://www.codeproject.com/Articles/35068/Creating-a-Custom-DropDown-Control
 // This class is a refactored copy of the class from the sample project from the above article.
@@ -62,9 +61,9 @@ public partial class DropDownControl : UserControl
     Dropped
   }
 
-  DropDownContainer dropContainer;
-  Control _dropDownItem;
-  bool closedWhileInControl;
+  private DropDownContainer dropContainer;
+  private Control _dropDownItem;
+  private bool closedWhileInControl;
   private Size storedSize;
 
   /// <summary>
@@ -76,9 +75,13 @@ public partial class DropDownControl : UserControl
   /// <summary>
   /// Text displayed in the drop down
   /// </summary>
+  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+  /// <summary>
+  /// Text displayed in the drop down
+  /// </summary>
   public new string Text
   {
-    get { return _Text; }
+    get => _Text;
     set { if (value.AssignIfNotEqual(ref _Text)) Invalidate(); }
   }
 
@@ -96,7 +99,7 @@ public partial class DropDownControl : UserControl
     dropContainer = null!;
     PropertyChanged = null!;
     _dropDownItem = null!;
-    _Text = Text;    
+    _Text = Text;
   }
 
   /// <summary>
@@ -121,12 +124,20 @@ public partial class DropDownControl : UserControl
   /// <summary>
   /// Anchor size
   /// </summary>
+  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+  /// <summary>
+  /// Anchor size
+  /// </summary>
   public Size AnchorSize
   {
-    get { return _AnchorSize; }
+    get => _AnchorSize;
     set { if (value.AssignIfNotEqual(ref _AnchorSize)) Invalidate(); }
   }
 
+  /// <summary>
+  /// Dock side
+  /// </summary>
+  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
   /// <summary>
   /// Dock side
   /// </summary>
@@ -141,10 +152,10 @@ public partial class DropDownControl : UserControl
   [DefaultValue(false)]
   protected bool DesignView
   {
-    get { return _DesignView; }
+    get => _DesignView;
     set
     {
-      if (value.AssignIfNotEqual(ref _DesignView) == false) return;
+      if (!value.AssignIfNotEqual(ref _DesignView)) return;
 
       if (_DesignView) Size = storedSize;
       else
@@ -169,6 +180,10 @@ public partial class DropDownControl : UserControl
   /// <summary>
   /// Not sure
   /// </summary>
+  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+  /// <summary>
+  /// Not sure
+  /// </summary>
   public Rectangle AnchorClientBounds { get; private set; }
 
   /// <summary>
@@ -185,7 +200,7 @@ public partial class DropDownControl : UserControl
       _AnchorSize.Height = Height;
       AnchorClientBounds = new Rectangle(2, 2, _AnchorSize.Width - 21, _AnchorSize.Height - 4);
     }
-    //[14/02/19] Added to fix 'streaking' redraw issue when resizing - e.g. when anchored on resizeable form.
+    //[14/02/19] Added to fix 'streaking' redraw issue when resizing - e.g. when anchored on resizable form.
     Invalidate();
     //
   }
@@ -249,7 +264,7 @@ public partial class DropDownControl : UserControl
     dropContainer = new DropDownContainer(_dropDownItem) { Bounds = GetDropDownBounds() };
     dropContainer.DropStateChange += new DropDownContainer.DropWindowArgs(DropContainer_DropStateChange);
     dropContainer.FormClosed += new FormClosedEventHandler(DropContainer_Closed);
-    ParentForm.Move += new EventHandler(ParentForm_Move);
+    ParentForm!.Move += new EventHandler(ParentForm_Move);
     DropState = DropStateOption.Dropping;
     dropContainer.Show(this);
     DropState = DropStateOption.Dropped;
@@ -257,10 +272,7 @@ public partial class DropDownControl : UserControl
     DropDownOpened?.Invoke(this, EventArgs.Empty);
   }
 
-  void ParentForm_Move(object? sender, EventArgs e)
-  {
-    dropContainer.Bounds = GetDropDownBounds();
-  }
+  private void ParentForm_Move(object? sender, EventArgs e) => dropContainer.Bounds = GetDropDownBounds();
 
   /// <summary>
   /// Closes the drop down
@@ -276,22 +288,19 @@ public partial class DropDownControl : UserControl
     }
   }
 
-  void DropContainer_DropStateChange(DropStateOption state)
-  {
-    DropState = state;
-  }
+  private void DropContainer_DropStateChange(DropStateOption state) => DropState = state;
 
-  void DropContainer_Closed(object? sender, FormClosedEventArgs e)
+  private void DropContainer_Closed(object? sender, FormClosedEventArgs e)
   {
     if (!dropContainer.IsDisposed)
     {
       dropContainer.DropStateChange -= DropContainer_DropStateChange;
       dropContainer.FormClosed -= DropContainer_Closed;
-      ParentForm.Move -= ParentForm_Move;
+      ParentForm!.Move -= ParentForm_Move;
       dropContainer.Dispose();
     }
     dropContainer = null!;
-    closedWhileInControl = (RectangleToScreen(ClientRectangle).Contains(Cursor.Position));
+    closedWhileInControl = RectangleToScreen(ClientRectangle).Contains(Cursor.Position);
     DropState = DropStateOption.Closed;
     Invalidate();
     DropDownClosed?.Invoke(this, new EventArgs());
@@ -304,11 +313,11 @@ public partial class DropDownControl : UserControl
   protected virtual Rectangle GetDropDownBounds()
   {
     Size inflatedDropSize = new(_dropDownItem.Width + 2, _dropDownItem.Height + 2);
-    Rectangle screenBounds = DockSide == DockSideOption.Left
-      ? new Rectangle(this.Parent.PointToScreen(new Point(this.Bounds.X, this.Bounds.Bottom)), inflatedDropSize)
-      : new Rectangle(this.Parent.PointToScreen(new Point(this.Bounds.Right - _dropDownItem.Width, this.Bounds.Bottom)), inflatedDropSize);
+    var screenBounds = DockSide == DockSideOption.Left
+      ? new Rectangle(this!.Parent!.PointToScreen(new Point(this.Bounds.X, this.Bounds.Bottom)), inflatedDropSize)
+      : new Rectangle(this!.Parent!.PointToScreen(new Point(this.Bounds.Right - _dropDownItem.Width, this.Bounds.Bottom)), inflatedDropSize);
 
-    Rectangle workingArea = Screen.GetWorkingArea(screenBounds);
+    var workingArea = Screen.GetWorkingArea(screenBounds);
 
     //make sure we're completely in the top-left working area
     if (screenBounds.X < workingArea.X) screenBounds.X = workingArea.X;
@@ -380,7 +389,7 @@ public partial class DropDownControl : UserControl
     }
   }
 
-  internal sealed class DropDownContainer : Form, IMessageFilter
+  internal sealed partial class DropDownContainer : Form, IMessageFilter
   {
     public bool Freeze;
 
@@ -409,10 +418,7 @@ public partial class DropDownControl : UserControl
 
     public delegate void DropWindowArgs(DropStateOption state);
     public event DropWindowArgs? DropStateChange;
-    public void OnDropStateChange(DropStateOption state)
-    {
-      DropStateChange?.Invoke(state);
-    }
+    public void OnDropStateChange(DropStateOption state) => DropStateChange?.Invoke(state);
 
     protected override void OnPaint(PaintEventArgs e)
     {
