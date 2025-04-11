@@ -3,9 +3,10 @@
 namespace PW.WinForms.Controls;
 
 /// <summary>
-/// TextBox is a Cue Banner.
+/// A TextBox with a Cue Banner property.
+/// This was obsolete, but the TextBox.CueBannerText property is no longer available, as of .NET6. 
+/// So we need to implement it ourselves, again.
 /// </summary>
-[Obsolete("Use standard TextBox")]
 public partial class CueBannerTextBox : TextBox
 {
   //const int WM_PASTE = 0x302;
