@@ -17,9 +17,6 @@ public partial class CueBannerTextBox : TextBox
   /// Text to display as Cue Banner.
   /// </summary>
   [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-  /// <summary>
-  /// Text to display as Cue Banner.
-  /// </summary>
   public string? CueBannerText { get; set; }
 
   /// <summary>
