@@ -4,7 +4,7 @@
 		<TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<Version>9.0.0</Version>
+		<Version>9.0.1</Version>
 
 		<RootNamespace>PW.WinForms</RootNamespace>
 		<AssemblyName>PW.WinForms</AssemblyName>
@@ -15,9 +15,9 @@
 		<AnalysisLevel>preview-all</AnalysisLevel>
 		<Title>PW.WinForms</Title>
 		<Authors>Paul Williams</Authors>
-		<Company>PWDevs</Company>
+		<Company>Computer Station</Company>
 		<Description>Stuff for WinForms</Description>
-		<Copyright>© 2022 Paul Williams</Copyright>
+		<Copyright>© 2025 Paul Williams</Copyright>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/Paul-Williams/PW.WinForms</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Paul-Williams/PW.WinForms</RepositoryUrl>
